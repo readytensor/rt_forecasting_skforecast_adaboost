@@ -1,0 +1,8 @@
+{
+  "n_estimators": 100,
+  "lags": 20,
+  "random_state": 0,
+  "learning_rate": 0.1,
+  "loss": "linear",
+  "history_forecast_ratio": null
+}
