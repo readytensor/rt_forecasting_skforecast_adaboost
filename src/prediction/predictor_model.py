@@ -101,10 +101,10 @@ class Forecaster:
             random_state=self.random_state,
         )
 
-        has_covariates = (
-            len(data_schema.future_covariates + data_schema.static_covariates) > 0
-        )
-        transformer_exog = MinMaxScaler if has_covariates else None
+        has_covariates = len(
+            data_schema.future_covariates + data_schema.static_covariates
+        ) > 0 or data_schema.time_col_dtype in ["DATE", "DATETIME"]
+        transformer_exog = MinMaxScaler() if has_covariates else None
 
         self.model = ForecasterAutoregMultiSeries(
             regressor=self.base_model,
