@@ -1,8 +1,10 @@
 {
   "n_estimators": 100,
-  "lags": 20,
+  "lags": null,
+  "lags_forecast_ratio": 4,
   "random_state": 0,
   "learning_rate": 0.1,
   "loss": "linear",
-  "history_forecast_ratio": null
+  "history_forecast_ratio": 20,
+  "use_exogenous": true
 }
