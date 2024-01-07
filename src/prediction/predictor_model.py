@@ -193,7 +193,7 @@ class Forecaster:
             all_series = self.crop_data(all_series)
 
         targets = [series[data_schema.target] for series in all_series]
-        target_series = pd.DataFrame({k: v for k, v in zip(all_ids, targets)})
+        target_series = pd.DataFrame({f"id_{k}": v for k, v in zip(all_ids, targets)})
 
         exog = None
 
@@ -249,7 +249,7 @@ class Forecaster:
             )
 
         forecast = self.model.predict(steps=self.data_schema.forecast_length, exog=exog)
-
+        forecast.columns = [c.split("id_")[1] for c in forecast.columns]
         predictions = []
         for column in forecast.columns:
             predictions += forecast[column].values.tolist()
