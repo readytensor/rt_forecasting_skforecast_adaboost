@@ -6,7 +6,6 @@ import pandas as pd
 from typing import Union, List
 from sklearn.ensemble import AdaBoostRegressor
 from skforecast.ForecasterAutoregMultiSeries import ForecasterAutoregMultiSeries
-
 from schema.data_schema import ForecastingSchema
 from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import MinMaxScaler
@@ -77,7 +76,6 @@ class Forecaster:
         self.n_estimators = n_estimators
         self.learning_rate = learning_rate
         self.loss = loss
-        self.use_exogenous = use_exogenous
         self.random_state = random_state
         self.lags = lags
         self._is_trained = False
@@ -85,6 +83,10 @@ class Forecaster:
         self.data_schema = data_schema
         self.end_index = {}
         self.history_length = None
+        has_covariates = len(
+            data_schema.future_covariates + data_schema.static_covariates
+        ) > 0 or data_schema.time_col_dtype in ["DATE", "DATETIME"]
+        self.use_exogenous = use_exogenous and has_covariates
 
         if history_forecast_ratio:
             self.history_length = (
@@ -101,9 +103,6 @@ class Forecaster:
             random_state=self.random_state,
         )
 
-        has_covariates = len(
-            data_schema.future_covariates + data_schema.static_covariates
-        ) > 0 or data_schema.time_col_dtype in ["DATE", "DATETIME"]
         transformer_exog = MinMaxScaler() if has_covariates else None
 
         self.model = ForecasterAutoregMultiSeries(
@@ -295,6 +294,7 @@ def train_predictor_model(
 
     Args:
         history (pd.DataFrame): The training data inputs.
+        data_schema (ForecastingSchema): Schema of training data.
         hyperparameters (dict): Hyperparameters for the Forecaster.
 
     Returns:
