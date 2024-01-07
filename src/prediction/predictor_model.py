@@ -101,11 +101,16 @@ class Forecaster:
             random_state=self.random_state,
         )
 
+        has_covariates = (
+            len(data_schema.future_covariates + data_schema.static_covariates) > 0
+        )
+        transformer_exog = MinMaxScaler if has_covariates else None
+
         self.model = ForecasterAutoregMultiSeries(
             regressor=self.base_model,
             lags=self.lags,
             transformer_series=MinMaxScaler(),
-            transformer_exog=MinMaxScaler(),
+            transformer_exog=transformer_exog,
         )
 
     def _add_future_covariates_from_date(
@@ -146,7 +151,7 @@ class Forecaster:
 
     def crop_data(self, all_series: List[pd.DataFrame]) -> List[pd.DataFrame]:
         """
-        Reduced the data based on the history_length attribute.
+        Reduces the data based on the history_length attribute.
 
         Args:
             all_series (List[pd.DataFrame]): List of the original data to be reduced.
