@@ -196,15 +196,15 @@ class Forecaster:
         target_series = pd.DataFrame({k: v for k, v in zip(all_ids, targets)})
 
         exog = None
+
         if self.use_exogenous:
             covariates_names = (
                 data_schema.future_covariates + data_schema.static_covariates
             )
-
             exog = [series[covariates_names] for series in all_series]
             exog = pd.concat(exog, axis=1)
             exog.columns = [str(i) for i in range(exog.shape[1])]
-            self.train_end_index = len(all_series[0])
+            self.train_end_index = all_series[0].index.values[-1]
 
         self.model.fit(series=target_series, exog=exog)
 
@@ -242,9 +242,10 @@ class Forecaster:
             exog = [series[covariates_names] for series in all_series]
             exog = pd.concat(exog, axis=1)
             exog.columns = [str(i) for i in range(exog.shape[1])]
+            start = self.train_end_index + 1
             exog.index = pd.RangeIndex(
-                start=self.train_end_index,
-                stop=self.train_end_index + self.data_schema.forecast_length,
+                start=start,
+                stop=start + self.data_schema.forecast_length,
             )
 
         forecast = self.model.predict(steps=self.data_schema.forecast_length, exog=exog)
