@@ -1,7 +1,7 @@
 {
   "n_estimators": 100,
   "lags": null,
-  "lags_forecast_ratio": 4,
+  "lags_forecast_ratio": 1,
   "random_state": 0,
   "learning_rate": 0.1,
   "loss": "linear",
