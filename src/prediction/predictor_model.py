@@ -108,7 +108,7 @@ class Forecaster:
             **kwargs,
         )
 
-        self.self.transformer_exog = MinMaxScaler() if has_covariates else None
+        self.transformer_exog = MinMaxScaler() if has_covariates else None
 
     def _add_future_covariates_from_date(
         self,
